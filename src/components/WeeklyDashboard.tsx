@@ -1,16 +1,16 @@
-import { useState } from "react"; // Added for state management
 import {
-  TrendingUp,
   Award,
-  Flame,
-  Target,
   Download,
+  Flame,
+  Loader2,
+  Target,
+  TrendingUp,
   Upload,
-  Loader2, // Added for loading spinner
-} from "lucide-react";
-import { JournalEntry, MoodType } from "../types/journal";
-import { analyticsUtils } from "../utils/analytics";
-import { storageUtils } from "../utils/storage";
+} from 'lucide-react';
+import { useState } from 'react'; // Added for state management
+import { JournalEntry, MoodType } from '../types/journal';
+import { analyticsUtils } from '../utils/analytics';
+import { storageUtils } from '../utils/storage';
 
 interface WeeklyDashboardProps {
   entries: JournalEntry[];
@@ -27,19 +27,19 @@ interface AISummaryResponse {
   next_week_focus: string[];
 }
 const moodEmojis: Record<MoodType, string> = {
-  amazing: "😄",
-  good: "🙂",
-  okay: "😐",
-  difficult: "😟",
-  challenging: "😢",
+  amazing: '😄',
+  good: '🙂',
+  okay: '😐',
+  difficult: '😟',
+  challenging: '😢',
 };
 
 const moodColors: Record<MoodType, string> = {
-  amazing: "bg-green-500",
-  good: "bg-blue-500",
-  okay: "bg-yellow-500",
-  difficult: "bg-orange-500",
-  challenging: "bg-red-500",
+  amazing: 'bg-green-500',
+  good: 'bg-blue-500',
+  okay: 'bg-yellow-500',
+  difficult: 'bg-orange-500',
+  challenging: 'bg-red-500',
 };
 
 export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
@@ -52,12 +52,12 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
 
   const handleExport = () => {
     const data = storageUtils.exportData();
-    const blob = new Blob([data], { type: "application/json" });
+    const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
     a.download = `journal-backup-${
-      new Date().toISOString().split("T")[0]
+      new Date().toISOString().split('T')[0]
     }.json`;
     document.body.appendChild(a);
     a.click();
@@ -72,10 +72,10 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
 
     try {
       // Step 1: Fetch data from localStorage
-      const journalData = localStorage.getItem("journal_entries");
+      const journalData = localStorage.getItem('journal_entries');
       if (!journalData) {
         throw new Error(
-          "No journal entries found in localStorage. Please add some reflections first."
+          'No journal entries found in localStorage. Please add some reflections first.'
         );
       }
 
@@ -83,16 +83,16 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
       try {
         parsedData = JSON.parse(journalData);
       } catch (parseError) {
-        throw new Error("Invalid journal data format in localStorage.");
+        throw new Error('Invalid journal data format in localStorage.');
       }
 
       // Step 2: Post to the API endpoint
       // https://homepage.spartatech.id/page/sZhPlR0jBx9CFDU8dlFNN7Bp5kaY9H
-      const response = await fetch("/api/summary", {
+      const response = await fetch('/api/summary', {
         // Change to your local endpoint
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(parsedData), // Send the journal entries as JSON
       });
@@ -105,16 +105,16 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
 
       // Step 3: Parse and validate the response
       const data: AISummaryResponse = await response.json();
-      if (!data || typeof data !== "object") {
-        throw new Error("Invalid response format from API.");
+      if (!data || typeof data !== 'object') {
+        throw new Error('Invalid response format from API.');
       }
 
       // Step 4: Store the response for display
       setAiSummary(data);
     } catch (error) {
-      console.error("Error generating AI summary:", error);
+      console.error('Error generating AI summary:', error);
       setSummaryError(
-        error instanceof Error ? error.message : "An unexpected error occurred."
+        error instanceof Error ? error.message : 'An unexpected error occurred.'
       );
     } finally {
       setIsLoadingSummary(false);
@@ -122,9 +122,9 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
   };
 
   const handleImport = () => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "application/json";
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'application/json';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
@@ -133,10 +133,10 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
           try {
             const data = event.target?.result as string;
             storageUtils.importData(data);
-            alert("Journal data imported successfully!");
+            alert('Journal data imported successfully!');
             window.location.reload();
           } catch (error) {
-            alert("Failed to import data. Please check the file format.");
+            alert('Failed to import data. Please check the file format.');
           }
         };
         reader.readAsText(file);
@@ -261,8 +261,8 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
           <div className="space-y-2">
             {moodTrend.map(({ date, mood }) => {
               const dateObj = new Date(date);
-              const dayName = dateObj.toLocaleDateString("en-US", {
-                weekday: "short",
+              const dayName = dateObj.toLocaleDateString('en-US', {
+                weekday: 'short',
               });
               const isToday =
                 dateObj.toDateString() === new Date().toDateString();
@@ -272,7 +272,7 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
                 <div key={date} className="flex items-center gap-3">
                   <div
                     className={`text-sm font-medium w-12 ${
-                      isToday ? "text-blue-600" : "text-gray-600"
+                      isToday ? 'text-blue-600' : 'text-gray-600'
                     }`}
                   >
                     {dayName}
@@ -385,12 +385,12 @@ export default function WeeklyDashboard({ entries }: WeeklyDashboardProps) {
           disabled={isLoadingSummary}
           className={`px-6 py-3 font-semibold rounded-lg transition-colors shadow-md flex items-center gap-2 ${
             isLoadingSummary
-              ? "bg-gray-400 text-white cursor-not-allowed"
-              : "bg-purple-600 text-white hover:bg-purple-700"
+              ? 'bg-gray-400 text-white cursor-not-allowed'
+              : 'bg-purple-600 text-white hover:bg-purple-700'
           }`}
         >
           {isLoadingSummary && <Loader2 size={20} className="animate-spin" />}
-          {isLoadingSummary ? "Generating..." : "Generate AI Summary"}
+          {isLoadingSummary ? 'Generating...' : 'Generate AI Summary'}
         </button>
         {summaryError && (
           <p className="mt-2 text-sm text-red-600 font-medium">
